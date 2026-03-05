@@ -1,0 +1,69 @@
+# EMG Gesture Recognition System Configuration
+
+# Serial Port Settings
+serial:
+  emg_port: "/dev/ttyUSB0"
+  emg_baud: 115200
+  actuator_port: "/dev/ttyUSB1"
+  actuator_baud: 9600
+
+# EMG Signal Parameters
+signal:
+  n_channels: 8
+  sample_rate: 1000  # Hz
+  window_size_ms: 200  # milliseconds
+  hop_size_ms: 50  # milliseconds
+  bytes_per_sample: 2  # 16-bit samples
+
+# Gesture Classes
+gesture_classes:
+  - "closed_hand"
+  - "open_hand"
+  - "pointing"
+
+# Preprocessing Parameters
+preprocessing:
+  bandpass_low: 20  # Hz
+  bandpass_high: 450  # Hz
+  bandpass_order: 4
+  notch_freq: 60  # Hz (power line frequency)
+  notch_q: 30  # Quality factor
+
+# Model Architecture
+model:
+  # CNN Branch
+  cnn_filters: [32, 64, 128]
+  cnn_kernel_size: 3
+  cnn_pool_size: 2
+
+  # BiLSTM Branch
+  lstm_hidden_size: 128
+  lstm_num_layers: 2
+  lstm_dropout: 0.3
+
+  # Fusion Layers
+  fc_hidden_size: 256
+  fc_dropout: 0.5
+
+# Training Parameters
+training:
+  batch_size: 32
+  learning_rate: 0.001
+  weight_decay: 0.01
+  epochs: 100
+  early_stopping_patience: 10
+  val_split: 0.2
+  class_weights: null  # Set to list of weights if imbalanced, e.g., [1.0, 1.2, 0.8]
+
+# Inference Parameters
+inference:
+  vote_window_size: 5  # Number of predictions for majority voting
+  min_stable_duration_ms: 100  # Minimum duration to confirm gesture
+  confidence_threshold: 0.6  # Minimum confidence to accept prediction
+
+# Paths
+paths:
+  recordings_dir: "recordings"
+  checkpoints_dir: "checkpoints"
+  normalization_stats: "recordings/norm_stats.npz"
+  training_log: "checkpoints/training_log.csv"
